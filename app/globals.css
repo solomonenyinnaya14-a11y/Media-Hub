@@ -1,7 +1,19 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+import type { Metadata } from 'next'
+import './globals.css'
 
-body {
-  font-family: system-ui, -apple-system, sans-serif;
+export const metadata: Metadata = {
+  title: 'MediaHub - Post Once, Reach Everywhere',
+  description: 'Built for Africa Creators',
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  )
 }
