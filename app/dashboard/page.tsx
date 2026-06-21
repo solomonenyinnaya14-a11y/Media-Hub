@@ -1,47 +1,33 @@
 export default function Dashboard() {
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
-      <h1 className="text-2xl font-bold mb-6">Your Dashboard</h1>
-
-      {/* Connect Accounts */}
-      <div className="bg-white rounded-xl p-6 mb-6 shadow-sm">
-        <h2 className="font-semibold mb-4">Connect Accounts</h2>
-        <p className="text-sm text-gray-500 mb-4">Connected: 0/3 accounts</p>
-
-        <div className="space-y-3">
-          <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium">
-            Connect Facebook
-          </button>
-          <button className="w-full bg-pink-500 text-white py-3 rounded-lg font-medium">
-            Connect Instagram
-          </button>
-          <button className="w-full bg-green-500 text-white py-3 rounded-lg font-medium">
-            Connect WhatsApp Business
-          </button>
-        </div>
-
-        {/* Coming Soon section - no popup */}
-        <div className="mt-6 pt-4 border-t border-gray-200">
-          <p className="text-xs text-gray-400 mb-2">Coming Soon:</p>
-          <div className="flex gap-2 opacity-40">
-            <div className="px-3 py-1 bg-gray-200 rounded text-xs">X</div>
-            <div className="px-3 py-1 bg-gray-200 rounded text-xs">TikTok</div>
-            <div className="px-3 py-1 bg-gray-200 rounded text-xs">Snapchat</div>
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
+        
+        {/* Stats cards - empty for now */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-gray-900 p-6 rounded-xl border-gray-800">
+            <p className="text-gray-400 text-sm">Total Posts</p>
+            <p className="text-3xl font-bold mt-2">0</p>
+          </div>
+          <div className="bg-gray-900 p-6 rounded-xl border border-gray-800">
+            <p className="text-gray-400 text-sm">X Followers</p>
+            <p className="text-3xl font-bold mt-2">--</p>
+          </div>
+          <div className="bg-gray-900 p-6 rounded-xl border-gray-800">
+            <p className="text-gray-400 text-sm">Referrals</p>
+            <p className="text-3xl font-bold mt-2">0/5</p>
           </div>
         </div>
-      </div>
-
-      {/* Composer */}
-      <div className="bg-white rounded-xl p-6 shadow-sm">
-        <h2 className="font-semibold mb-4">Create Post</h2>
-        <textarea
-          placeholder="Write your post..."
-          className="w-full h-32 border rounded-lg p-3 mb-4"
-        />
-
-        <button className="w-full bg-green-600 text-white py-3 rounded-lg font-bold">
-          Post to All Connected Platforms
-        </button>
+        
+        {/* Empty state */}
+        <div className="bg-gray-900 p-12 rounded-xl border-gray-800 text-center">
+          <h2 className="text-2xl font-bold mb-4">No posts yet</h2>
+          <p className="text-gray-400 mb-6">Connect X + Facebook, then create your first post</p>
+          <button className="px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold">
+            Create First Post
+          </button>
+        </div>
       </div>
     </main>
   )
