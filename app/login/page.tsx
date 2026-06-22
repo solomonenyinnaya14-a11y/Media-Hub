@@ -16,7 +16,6 @@ export default function Login() {
     setLoading(true)
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     setLoading(false)
-    
     if (error) alert(error.message)
     else router.push('/dashboard')
   }
@@ -26,27 +25,9 @@ export default function Login() {
       <div className="max-w-md w-full p-8 bg-white rounded-2xl shadow">
         <h1 className="text-2xl font-bold mb-6">Login to Media Hub</h1>
         <form onSubmit={handleLogin} className="space-y-4">
-          <input 
-            type="email" 
-            placeholder="Email" 
-            value={email} 
-            onChange={e=>setEmail(e.target.value)} 
-            required
-            className="w-full p-3 border rounded-lg" 
-          />
-          <input 
-            type="password" 
-            placeholder="Password" 
-            value={password} 
-            onChange={e=>setPassword(e.target.value)} 
-            required
-            className="w-full p-3 border rounded-lg" 
-          />
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="w-full bg-black text-white p-3 rounded-lg font-semibold disabled:opacity-50"
-          >
+          <input type="email" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} required className="w-full p-3 border rounded-lg" />
+          <input type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} required className="w-full p-3 border rounded-lg" />
+          <button type="submit" disabled={loading} className="w-full bg-black text-white p-3 rounded-lg font-semibold disabled:opacity-50">
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
