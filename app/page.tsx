@@ -1,34 +1,79 @@
+'use client'
+
+import { useState } from 'react'
+import { createClient } from '@/lib/supabase'
+import { useRouter } from 'next/navigation'
+
 export default function Home() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState('')
+  const [isLogin, setIsLogin] = useState(false)
+  const supabase = createClient()
+  const router = useRouter()
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setMessage('')
+
+    if (isLogin) {
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) setMessage(error.message)
+      else router.push('/dashboard')
+    } else {
+      const { error } = await supabase.auth.signUp({ email, password })
+      if (error) setMessage(error.message)
+      else setMessage('Account created! Check email or try login if confirm is off')
+    }
+    
+    setLoading(false)
+  }
+
   return (
-    <main className="min-h-screen bg-black text-white flex-col">
-      {/* Hero */}
-      <div className="flex-1 flex-col items-center justify-center px-6 text-center">
-        <h1 class="text-5xl md:text-7xl font-bold mb-6">
-          Post once. <span className="text-purple-500">Reach everywhere.</span>
-        </h1>
-        <p className="text-xl text-gray-400 mb-8 max-w-2xl">
-          Media Hub lets Nigerian creators write 1 post → Publish to X + Facebook at same time. 
-          No more copy-paste.
+    <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-black text-white">
+      <div className="max-w-md w-full text-center">
+        <h1 className="text-4xl font-bold mb-4">Media Hub</h1>
+        <p className="text-gray-400 mb-8">
+          Post once. Reach X + Facebook at same time.
         </p>
-        
-        {/* Email capture */}
-        <form className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
-          <input 
-            type="email" 
-            placeholder="Enter your email for early access"
-            className="flex-1 px-4 py-3 rounded-lg bg-gray-900 border-gray-700 focus:border-purple-500 outline-none"
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="email"
             required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+            className="w-full px-4 py-3 rounded-lg bg-gray-900 border-gray-700 text-white"
           />
-          <button className="px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold">
-            Join Waitlist
+          <input
+            type="password"
+            required
+            value={password}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Password min 6 chars"
+            className="w-full px-4 py-3 rounded-lg bg-gray-900 border-gray-700 text-white"
+          />
+          
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 rounded-lg bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 font-semibold"
+          >
+            {loading ? 'Loading...' : isLogin ? 'Login' : 'Sign Up'}
           </button>
         </form>
-        <p className="text-sm text-gray-500 mt-4">Free forever for first 100 creators</p>
-      </div>
-      
-      {/* Social proof */}
-      <div className="py-8 border-t border-gray-800 text-center text-gray-500 text-sm">
-        Built for X + Facebook creators in Nigeria
+
+        <button
+          onClick={() => setIsLogin(!isLogin)}
+          className="mt-4 text-sm text-gray-400 underline"
+        >
+          {isLogin ? "Don't have account? Sign up" : "Already have account? Login"}
+        </button>
+
+        {message && <p className="mt-4 text-sm text-green-400">{message}</p>}
       </div>
     </main>
   )
