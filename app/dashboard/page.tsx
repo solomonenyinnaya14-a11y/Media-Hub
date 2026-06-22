@@ -18,14 +18,14 @@ export default function Dashboard() {
         setLoading(false)
       }
     })
-  }, [])
+  }, [router, supabase.auth])
 
   async function handleLogout() {
     await supabase.auth.signOut()
     router.push('/login')
   }
 
-  if (loading) return <div className="p-8">Loading...</div>
+  if (loading) return <div className="p-8 text-white">Loading...</div>
 
   return (
     <main className="min-h-screen bg-black text-white p-8">
