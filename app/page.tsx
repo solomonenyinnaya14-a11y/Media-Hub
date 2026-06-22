@@ -18,16 +18,19 @@ export default function Home() {
     setLoading(true)
     setMessage('')
 
-    if (isLogin) {
-      const { error } = await supabase.auth.signInWithPassword({ email, password })
-      if (error) setMessage(error.message)
-      else router.push('/dashboard')
-    } else {
-      const { error } = await supabase.auth.signUp({ email, password })
-      if (error) setMessage(error.message)
-      else setMessage('Account created! Check email or try login if confirm is off')
+    try {
+      if (isLogin) {
+        const { error } = await supabase.auth.signInWithPassword({ email, password })
+        if (error) throw error
+        router.push('/dashboard')
+      } else {
+        const { error } = await supabase.auth.signUp({ email, password })
+        if (error) throw error
+        setMessage('Account created! Try login now')
+      }
+    } catch (err: any) {
+      setMessage(err.message)
     }
-    
     setLoading(false)
   }
 
@@ -52,7 +55,7 @@ export default function Home() {
             type="password"
             required
             value={password}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             placeholder="Password min 6 chars"
             className="w-full px-4 py-3 rounded-lg bg-gray-900 border-gray-700 text-white"
           />
