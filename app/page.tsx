@@ -2,19 +2,13 @@ import Link from 'next/link'
 
 export default function Home() {
   return (
-    <main className="min-h-screen flex items-center justify-center p-8">
-      <div className="max-w-md text-center text-white">
-        <h1 className="text-5xl font-bold mb-4">MediaHub</h1>
-        <p className="text-xl mb-8">Post once. Reach X + Facebook at same time.</p>
-        <div className="space-y-3">
-          <Link href="/signup" className="block w-full bg-white text-black p-4 rounded-lg font-bold">
-            Get Early Access
-          </Link>
-          <Link href="/login" className="block w-full border-white p-4 rounded-lg">
-            Login
-          </Link>
-        </div>
+    <div className="min-h-screen flex-col items-center justify-center">
+      <h1>Post once. Reach everywhere.</h1>
+      <p>Media Hub for Nigerian creators</p>
+      <div className="space-x-4 mt-8">
+        <Link href="/login">Sign In</Link>
+        <Link href="/signup">Get Started Free</Link>
       </div>
-    </main>
+    </div>
   )
 }
