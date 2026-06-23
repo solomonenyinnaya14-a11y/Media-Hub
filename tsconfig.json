@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {"@/*": ["./*"]},
+    "target": "ES2022",
+    "jsx": "preserve",
+    "strict": true
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
+}
