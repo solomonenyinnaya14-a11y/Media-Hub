@@ -8,12 +8,12 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const supabase = createClient() // <- MUST STAY HERE, not inside handleLogin
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
-    const supabase = createClient()
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { error } = await supabase.auth.signInWithPassword({ email, password }) // use top supabase
     setLoading(false)
     
     if (error) alert(error.message)
