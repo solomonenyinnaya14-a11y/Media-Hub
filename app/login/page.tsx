@@ -2,7 +2,6 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -16,25 +15,24 @@ export default function Login() {
     setLoading(true)
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     setLoading(false)
+    
     if (error) alert(error.message)
-    else router.push('/dashboard')
+    else router.push('/settings')
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full p-8 bg-white rounded-2xl shadow">
-        <h1 className="text-2xl font-bold mb-6">Login to Media Hub</h1>
-        <form onSubmit={handleLogin} className="space-y-4">
-          <input type="email" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} required className="w-full p-3 border rounded-lg" />
-          <input type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} required className="w-full p-3 border rounded-lg" />
-          <button type="submit" disabled={loading} className="w-full bg-black text-white p-3 rounded-lg font-semibold disabled:opacity-50">
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
-        <p className="mt-4 text-sm text-center">
-          No account? <Link href="/signup" className="text-blue-600">Sign up</Link>
-        </p>
-      </div>
-    </main>
+    <div className="min-h-screen bg-black text-white flex items-center justify-center p-6">
+      <form onSubmit={handleLogin} className="w-full max-w-sm space-y-4">
+        <h1 className="text-3xl font-bold">Login</h1>
+        <input type="email" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} 
+          className="w-full px-4 py-3 rounded-lg bg-gray-900 border-gray-800" required />
+        <input type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} 
+          className="w-full px-4 py-3 rounded-lg bg-gray-900 border-gray-800" required />
+        <button disabled={loading} className="w-full py-3 bg-purple-600 rounded-lg font-semibold">
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
+        <p className="text-sm text-gray-400">No account? <a href="/signup" className="text-purple-400">Sign up</a></p>
+      </form>
+    </div>
   )
 }
