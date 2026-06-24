@@ -1,16 +1,16 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 
-// Use service_role key on server to bypass RLS
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
-
 export async function POST(req: Request) {
+  // Move createClient INSIDE so Vercel doesn't crash at build time
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+
   try {
     const { email } = await req.json()
-    
+
     // Basic validation
     if (!email || !email.includes('@')) {
       return NextResponse.json({ error: 'Valid email required' }, { status: 400 })
@@ -30,7 +30,6 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ success: true, data })
-    
   } catch (err) {
     console.log('Route error:', err)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
