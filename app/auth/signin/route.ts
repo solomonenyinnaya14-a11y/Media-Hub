@@ -8,12 +8,24 @@ export async function POST(request: Request) {
   const password = formData.get('password') as string
 
   const cookieStore = await cookies()
+  
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: { get: (name) => cookieStore.get(name)?.value } }
+    {
+      cookies: {
+        get: (name: string) => cookieStore.get(name)?.value,
+        set: (name: string, value: string, options) => cookieStore.set(name, value, options),
+        remove: (name: string, options) => cookieStore.set(name, '', options),
+      },
+    }
   )
 
-  await supabase.auth.signInWithPassword({ email, password })
+  const { error } = await supabase.auth.signInWithPassword({ email, password })
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 401 })
+  }
+
   return NextResponse.redirect('/dashboard')
 }
