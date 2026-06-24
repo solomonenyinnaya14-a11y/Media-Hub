@@ -1,31 +1,37 @@
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 
-export async function POST(request: Request) {
-  const formData = await request.formData()
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
-
-  const cookieStore = await cookies()
-  
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      cookies: {
-        get: (name: string) => cookieStore.get(name)?.value,
-        set: (name: string, value: string, options: any) => cookieStore.set(name, value, options),
-        remove: (name: string, options: any) => cookieStore.set(name, '', options),
-      },
-    }
+export async function POST(req: Request) {
+  // Move createClient INSIDE so Vercel doesn't crash at build time
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
 
-  const { error } = await supabase.auth.signUp({ email, password })
+  try {
+    const { email } = await req.json()
 
-  if (error) {
-    return NextResponse.redirect(`/signup?error=${encodeURIComponent(error.message)}`)
+    // Basic validation
+    if (!email || !email.includes('@')) {
+      return NextResponse.json({ error: 'Valid email required' }, { status: 400 })
+    }
+
+    // Insert to waitlist table
+    const { data, error } = await supabase
+      .from('waitlist')
+      .insert([{ email, created_at: new Date().toISOString() }])
+      .select()
+
+    // Log errors so we see them in Vercel logs
+    console.log('Waitlist insert result:', { data, error })
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 400 })
+    }
+
+    return NextResponse.json({ success: true, data })
+  } catch (err) {
+    console.log('Route error:', err)
+    return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
-
-  return NextResponse.redirect('/dashboard')
 }
