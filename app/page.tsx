@@ -14,48 +14,84 @@ export default function Home() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email }),
     });
-    setStatus(res.ok ? "✅ You're on the list!" : '❌ Already joined');
+    setStatus(res.ok? "✅ You're on the list!" : '❌ Already joined');
     if(res.ok) setEmail('');
   };
 
   return (
-    <main className="min-h-screen bg-black text-white flex items-center justify-center px-6">
-      <div className="max-w-2xl w-full text-center space-y-6">
+    <main style={{
+      minHeight: '100vh',
+      backgroundColor: '#000',
+      color: '#ffffff',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '24px',
+      fontFamily: 'system-ui, sans-serif',
+      textAlign: 'center'
+    }}>
+      <div style={{ maxWidth: '600px', width: '100%' }}>
         
-        <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-tight">
-          Media Hub lets you <span className="text-green-500">Post Once. Reach Everywhere</span>
+        <h1 style={{ fontSize: '48px', fontWeight: '800', lineHeight: '1.1', marginBottom: '16px' }}>
+          Post once.<br/>
+          <span style={{ color: '#A855F7' }}>Reach everywhere.</span>
         </h1>
 
-        <p className="text-xl text-gray-400 max-w-xl mx-auto">
-          Schedule your posts to Facebook, X, Instagram while you do other stuff.
+        <p style={{ fontSize: '18px', color: '#9CA3AF', marginBottom: '32px', lineHeight: '1.6' }}>
+          Media Hub lets Nigerian creators write 1 post → Publish to X + Facebook at same time. No more copy-paste.
         </p>
 
-        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto pt-4">
+        <form onSubmit={handleSubmit} style={{ maxWidth: '400px', margin: '0 auto' }}>
           <input 
             type="email" 
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email"
-            className="flex-1 bg-zinc-900 border-zinc-700 rounded-lg px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+            style={{
+              width: '100%',
+              backgroundColor: '#1F2937',
+              border: 'none',
+              borderRadius: '12px',
+              padding: '14px 16px',
+              color: '#ffffff',
+              fontSize: '16px',
+              marginBottom: '12px',
+              outline: 'none'
+            }}
           />
-          <button className="bg-green-500 hover:bg-green-600 text-black font-bold rounded-lg px-6 py-3 transition whitespace-nowrap">
-            Get 50% OFF
+          <button 
+            type="submit"
+            style={{
+              width: '100%',
+              backgroundColor: '#A855F7',
+              color: '#ffffff',
+              fontWeight: '700',
+              borderRadius: '12px',
+              padding: '14px 16px',
+              fontSize: '16px',
+              border: 'none',
+              cursor: 'pointer'
+            }}
+          >
+            Join Waitlist
           </button>
         </form>
 
-        {status && <p className="text-sm text-green-400">{status}</p>}
+        {status && <p style={{ fontSize: '14px', marginTop: '12px', color: '#A855F7' }}>{status}</p>}
 
-        <div className="bg-zinc-900/60 border-green-500/30 rounded-xl p-3 max-w-sm mx-auto">
-          <p className="text-sm text-green-400 font-semibold">🔥 Only 100 spots at 50% off for life</p>
-          <p className="text-xs text-gray-500">Price goes up after. Lock in now.</p>
+        <div style={{ marginTop: '16px' }}>
+          <p style={{ fontSize: '14px', color: '#A855F7', fontWeight: '600' }}>
+            🔥 Free forever for first 100 creators
+          </p>
+          <p style={{ fontSize: '14px', color: '#A855F7', fontWeight: '600' }}>
+            50% OFF for life after that
+          </p>
         </div>
 
-        <div className="flex justify-center items-center gap-8 pt-4 text-gray-400 text-3xl font-bold">
-          <span>f</span> 
-          <span>X</span> 
-          <span className="text-lg">Instagram</span> 
-        </div>
+        <p style={{ fontSize: '14px', color: '#4B5563', marginTop: '40px' }}>
+          Built for X + Facebook creators in Nigeria
+        </p>
 
       </div>
     </main>
