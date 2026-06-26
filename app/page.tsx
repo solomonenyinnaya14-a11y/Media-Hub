@@ -1,57 +1,62 @@
-'use client'
-import Link from 'next/link'
-import { useState } from 'react'
+'use client';
+
+import { useState } from 'react';
 
 export default function Home() {
-  const [email, setEmail] = useState('')
-  const [msg, setMsg] = useState('')
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState('');
 
-  async function join(e: React.FormEvent) {
-    e.preventDefault()
-    setMsg('Saving...')
-
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('Saving...');
     const res = await fetch('/api/waitlist', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }) // <- FIXED: added { }
-    })
-
-    setMsg(res.ok ? '✅ You\'re on the list!' : '⚠️ Already joined')
-    setEmail('')
-  }
+      body: JSON.stringify({ email }),
+    });
+    setStatus(res.ok ? "✅ You're on the list!" : '❌ Already joined');
+    if(res.ok) setEmail('');
+  };
 
   return (
-    <main className="min-h-screen flex-col items-center justify-center bg-black text-white p-8">
-      <div className="text-center">
-        <h1 className="text-5xl font-bold mb-4">Media Hub</h1>
-        <p className="text-xl text-gray-400 text-xl">Post once.</p>
-        <p className="text-gray-500 mt-2 max-w-md">
-          Nigerian creators write 1 post → Publish to X + Facebook at once. No more copy-paste.
+    <main className="min-h-screen bg-black text-white flex items-center justify-center px-6">
+      <div className="max-w-2xl w-full text-center space-y-6">
+        
+        <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-tight">
+          Media Hub lets you <span className="text-green-500">Post Once. Reach Everywhere</span>
+        </h1>
+
+        <p className="text-xl text-gray-400 max-w-xl mx-auto">
+          Schedule your posts to Facebook, X, Instagram while you do other stuff.
         </p>
-      </div>
 
-      {/* WAITLIST FORM */}
-      <form onSubmit={join} className="flex flex-col gap-3 w-full max-w-sm">
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your email for early access"
-          required
-          className="px-4 py-3 rounded-lg bg-gray-900 border-gray-700 text-white"
-        />
-        <button type="submit" className="bg-purple-600 py-3 rounded-lg font-bold">
-          Join Waitlist
-        </button>
-      </form>
-      <p className="text-center text-sm">{msg}</p>
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto pt-4">
+          <input 
+            type="email" 
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
+            className="flex-1 bg-zinc-900 border-zinc-700 rounded-lg px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+          <button className="bg-green-500 hover:bg-green-600 text-black font-bold rounded-lg px-6 py-3 transition whitespace-nowrap">
+            Get 50% OFF
+          </button>
+        </form>
 
-      <p className="text-xs text-gray-600">Free forever for first 100 creators</p>
-      
-      {/* KEEP YOUR LOGIN/SIGNUP LINKS */}
-      <div className="space-x-4 mt-4">
-        <Link href="/login" className="px-6 py-3 bg-purple-600 rounded">Sign In</Link>
-        <Link href="/signup" className="px-6 py-3 border-purple-600 rounded">Sign Up</Link>
+        {status && <p className="text-sm text-green-400">{status}</p>}
+
+        <div className="bg-zinc-900/60 border-green-500/30 rounded-xl p-3 max-w-sm mx-auto">
+          <p className="text-sm text-green-400 font-semibold">🔥 Only 100 spots at 50% off for life</p>
+          <p className="text-xs text-gray-500">Price goes up after. Lock in now.</p>
+        </div>
+
+        <div className="flex justify-center items-center gap-8 pt-4 text-gray-400 text-3xl font-bold">
+          <span>f</span> 
+          <span>X</span> 
+          <span className="text-lg">Instagram</span> 
+        </div>
+
       </div>
     </main>
   )
