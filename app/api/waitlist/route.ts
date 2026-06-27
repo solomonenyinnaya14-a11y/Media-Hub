@@ -1,10 +1,11 @@
 import { Resend } from 'resend';
 import { createClient } from '@supabase/supabase-js';
+import { NextResponse } from 'next/server';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
 export async function POST(req: Request) {
@@ -12,23 +13,26 @@ export async function POST(req: Request) {
     const { email } = await req.json();
 
     // 1. Save to Supabase
-    const { error: dbError } = await supabase.from('waitlist').insert([{ email }]);
-    if (dbError && !dbError.message.includes('duplicate')) {
-      console.error('Supabase Error:', dbError);
-      return Response.json({ error: 'DB Error' }, { status: 500 });
-    }
+    const { error: dbError } = await supabase.from('waitlist').insert({ email });
+    if (dbError) throw dbError;
 
-    // 2. Send Email via Resend
+    // 2. Send email - TO YOUR GMAIL ONLY
     await resend.emails.send({
       from: 'Media Hub <onboarding@resend.dev>',
-      to: email,
-      subject: 'You’re on the Media Hub waitlist ✅',
-      html: `<p>CEO, you’re locked in. <br/>Only 100 spots at 50% off. We’ll email you at launch.</p>`,
+      to: 'solomonenyinaya14@gmail.com', // <-- This is your real Gmail
+      subject: '🔒 You’re locked in for 50% off Media Hub',
+      html: `
+        <h2>CEO, you’re on the list.</h2>
+        <p>Only 100 spots at 50% off. Price doubles at launch.</p>
+        <p>We’ll email you when doors open.</p>
+        <br>
+        <p>- Media Hub Team</p>
+      `,
     });
 
-    return Response.json({ ok: true });
-  } catch (error) {
+    return NextResponse.json({ ok: true });
+  } catch (error: any) {
     console.error(error);
-    return Response.json({ error: 'Failed' }, { status: 500 });
+    return NextResponse.json({ error: error.message }, { status: 400 });
   }
 }
