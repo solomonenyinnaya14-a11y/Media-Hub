@@ -1,1 +1,49 @@
-'use client';import{useState}from'react';export default function Home(){const[e,setE]=useState('');const[s,setS]=useState('');const h=async(x)=>{x.preventDefault();setS('Saving...');const r=await fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e})});setS(r.ok?"✅ On list!":'❌ Joined');if(r.ok)setE('')};return<main style={{minHeight:'100vh',background:'#000',color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',padding:24,fontFamily:'system-ui',textAlign:'center'}}><div style={{maxWidth:500}}><h1 style={{fontSize:52,fontWeight:800,margin:'0 0 20px'}}>Post once.<br/><span style={{color:'#A855F7'}}>Reach<br/>everywhere.</span></h1><p style={{fontSize:17,color:'#9CA3AF',margin:'0 0 32px'}}>Media Hub lets Nigerian creators write 1 post → X + Facebook. No copy-paste.</p><form onSubmit={h} style={{maxWidth:400,margin:'0 auto 16px'}}><input type="email" required value={e} onChange={x=>setE(x.target.value)} placeholder="Enter email" style={{width:'100%',background:'#1F2937',border:'none',borderRadius:12,padding:16,color:'#fff',fontSize:16,marginBottom:12}}/><button type="submit" style={{width:'100%',background:'#A855F7',color:'#fff',fontWeight:700,borderRadius:12,padding:16,fontSize:16,border:'none'}}>Join Waitlist</button></form>{s&&<p style={{color:'#A855F7',margin:'0 0 8px'}}>{s}</p>}<p style={{color:'#A855F7',fontWeight:700,margin:0}}>First 100 users 50% discount forever</p></div></main>}
+export default function Waitlist() {
+  return (
+    <main className="min-h-dvh bg-black text-white px-6 py-12">
+      <div className="max-w-md mx-auto w-full flex-col gap-6">
+
+        {/* Headline */}
+        <h1 className="text-[36px] leading-[1.1] font-bold tracking-tight">
+          Media Hub lets you Post Once. <br/>
+          <span className="text-purple-500">Reach Everywhere</span>
+        </h1>
+
+        {/* Subtext */}
+        <p className="text-zinc-400 text-base leading-relaxed">
+          Schedule your posts to Facebook, X, Instagram while you do other stuff.
+        </p>
+
+        {/* Offer + Urgency */}
+        <div className="space-y-1">
+          <p className="text-purple-400 font-semibold text-sm">
+            50% discount for first 100 users forever
+          </p>
+          <p className="text-zinc-500 text-sm">
+            Price goes up after. Lock in now.
+          </p>
+        </div>
+
+        {/* Email + CTA */}
+        <form className="space-y-3 pt-2">
+          <input
+            type="email"
+            required
+            placeholder="Enter your email"
+            className="w-full h-12 px-4 rounded-xl bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+          <button
+            type="submit"
+            className="w-full h-12 rounded-xl bg-purple-600 font-bold text-white active:scale-[0.98] transition">
+            Join Waitlist
+          </button>
+        </form>
+
+        {/* Footer - kills white space */}
+        <p className="text-center text-zinc-600 text-xs pt-8">
+          Built for X + Facebook + Instagram creators in Nigeria © 2026
+        </p>
+      </div>
+    </main>
+  )
+}
