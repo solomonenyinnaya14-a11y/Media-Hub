@@ -1,63 +1,74 @@
-'use client'
-import { useState } from 'react'
+'use client';
+import { useState } from 'react';
 
 export default function Page() {
-  const [email, setEmail] = useState('')
-  const [msg, setMsg] = useState('')
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'ok'>('idle');
 
-  const submit = async (e: any) => {
-    e.preventDefault()
-    setMsg('Adding...')
+  async function join(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email) return;
+    setStatus('loading');
     const res = await fetch('/api/waitlist', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email })
-    })
-    const data = await res.json()
-    if (res.ok) {
-      setMsg('✅ Locked in. 50% off secured forever')
-      setEmail('')
-    } else {
-      setMsg(data.error?.includes('duplicate') ? 'You’re already on the list ✅' : 'Try again')
-    }
+      body: JSON.stringify({ email }),
+    });
+    if (res.ok) setStatus('ok');
+    else setStatus('idle');
   }
 
   return (
-    <main style={{background:'#000',color:'#fff',minHeight:'100dvh',fontFamily:'-apple-system,BlinkMacSystemFont,sans-serif',padding:28,display:'flex',flexDirection:'column'}}>
-      <div style={{marginTop:48}}>
-        <h1 style={{fontSize:38,lineHeight:1.1,fontWeight:800,letterSpacing:'-1px'}}>
-          Post Once.<br/><span style={{color:'#A855F7'}}>Reach Everywhere.</span>
+    <main style={{minHeight:'100vh',background:'#000',color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
+      <div style={{maxWidth:560,width:'100%'}}>
+        <h1 style={{fontSize:48,lineHeight:1.05,margin:'0 0 16px'}}>
+          Post Once. <br />
+          <span style={{color:'#a855f7'}}>Reach Everywhere.</span>
         </h1>
-        <p style={{color:'#A1A1AA',fontSize:16,marginTop:12,lineHeight:1.5}}>
+        <p style={{opacity:.8,margin:'0 0 24px'}}>
           Schedule to Facebook, X, Instagram from one dashboard. Stop copy-pasting.
         </p>
-      </div>
 
-      <div style={{background:'#0A0A0A',border:'1px solid #27272A',borderRadius:20,padding:24,marginTop:24}}>
-        <p style={{color:'#A855F7',fontWeight:800,fontSize:12,letterSpacing:'1px'}}>FOUNDING CREATOR OFFER</p>
-        <p style={{fontSize:26,fontWeight:800,marginTop:6}}>50% OFF. For life.</p>
-        <p style={{color:'#A1A1AA',fontSize:14,marginTop:4}}>Only 100 spots. Then price goes up.</p>
-        
-        <form onSubmit={submit} style={{marginTop:20}}>
-          <input 
-            type="email" required value={email} onChange={e=>setEmail(e.target.value)} 
-            placeholder="your@email.com" 
-            style={{width:'100%',height:52,borderRadius:14,background:'#18181B',border:'1px solid #27272A',color:'#fff',padding:'0 16px',fontSize:16}}
-          />
-          <button style={{width:'100%',height:52,marginTop:10,borderRadius:14,background:'#9333EA',color:'#fff',fontWeight:800,border:'none',fontSize:16}}>
-            Lock In Now
-          </button>
-          {msg && <p style={{marginTop:12,color:'#A855F7',fontSize:14,fontWeight:700,textAlign:'center'}}>{msg}</p>}
-        </form>
-      </div>
+        <div style={{background:'#0a0a0a',border:'1px solid #222',borderRadius:16,padding:20}}>
+          <div style={{fontSize:12,letterSpacing:1,color:'#a855f7',marginBottom:8}}>
+            FOUNDING CREATOR OFFER
+          </div>
+          <div style={{fontSize:28,fontWeight:800,marginBottom:8}}>
+            Lock in 50% off at launch.
+          </div>
+          <div style={{opacity:.8,marginBottom:16}}>
+            Only 100 spots. Price doubles after.
+          </div>
 
-      <div style={{marginTop:20,display:'flex',gap:16,color:'#71717A',fontSize:13,fontWeight:600}}>
-        <span>🔥 100 spots</span><span>⚡ Nigeria</span><span>📱 X + IG + FB</span>
-      </div>
+          <form onSubmit={join} style={{display:'grid',gap:12}}>
+            <input
+              type="email"
+              required
+              placeholder="your@email.com"
+              value={email}
+              onChange={e=>setEmail(e.target.value)}
+              style={{padding:'14px 16px',borderRadius:12,border:'1px solid #333',background:'#111',color:'#fff',fontSize:16}}
+            />
+            <button disabled={status==='loading'} style={{padding:'14px 16px',borderRadius:12,border:0,background:'#a855f7',color:'#fff',fontWeight:700,fontSize:16,cursor:'pointer'}}>
+              {status==='loading' ? 'Adding...' : 'Lock In Now'}
+            </button>
+            {status==='ok' && (
+              <div style={{fontSize:14,color:'#a855f7',display:'flex',gap:8,alignItems:'center'}}>
+                ✅ Locked in. 50% off reserved for you at launch
+              </div>
+            )}
+          </form>
+        </div>
 
-      <p style={{textAlign:'center',color:'#52525B',fontSize:12,marginTop:'auto',paddingTop:24}}>
-        © 2026 Media Hub. Built for creators who hate posting 3 times.
-      </p>
+        <div style={{display:'flex',gap:12,opacity:.7,fontSize:12,marginTop:12}}>
+          <div>🔥 100 spots</div>
+          <div>⚡ Nigeria</div>
+          <div>📱 X + IG + FB</div>
+        </div>
+        <p style={{opacity:.5,fontSize:12,marginTop:16}}>
+          © 2026 Media Hub. Built for creators who hate posting 3 times.
+        </p>
+      </div>
     </main>
-  )
+  );
 }
