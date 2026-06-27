@@ -19,22 +19,24 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-black text-white flex-col items-center justify-center p-6 font-serif">
-      <h1 className="text-5xl font-bold text-left w-full max-w-md">
-        Post Once. <br />
-        <span className="text-purple-500">Reach</span>
-        <br />
-        <span className="text-purple-500">Everywhere.</span>
-      </h1>
-      <p className="mt-4 text-left text-gray-300 max-w-md">
-        Schedule to Facebook, X, Instagram from one dashboard. Stop copy-pasting.
-      </p>
+      <div className="w-full max-w-md">
+        <h1 className="text-5xl font-bold text-left">
+          Post Once. <br />
+          <span className="text-purple-500">Reach</span>
+          <br />
+          <span className="text-purple-500">Everywhere.</span>
+        </h1>
+        <p className="mt-4 text-left text-gray-300">
+          Schedule to Facebook, X, Instagram from one dashboard. Stop copy-pasting.
+        </p>
+      </div>
 
       <div className="mt-8 w-full max-w-md p-6 rounded-2xl border-gray-800 bg-gray-900/50">
         <p className="text-xs text-purple-400 font-semibold tracking-widest">FOUNDING CREATOR OFFER</p>
         <h2 className="text-3xl font-bold mt-2">Lock in 50% off at launch.</h2>
         <p className="text-sm text-gray-400 mt-2">Only 100 spots. Price doubles after.</p>
         
-        <form onSubmit={handleSubmit} className="mt-6">
+        <form onSubmit={handleSubmit} className="mt-6 space-y-3">
           <input
             type="email"
             required
@@ -45,7 +47,7 @@ export default function Home() {
           />
           <button
             disabled={status === 'loading'}
-            className="w-full mt-3 p-3 rounded-lg bg-purple-600 font-bold hover:bg-purple-700 disabled:bg-gray-700"
+            className="w-full p-3 rounded-lg bg-purple-600 font-bold hover:bg-purple-700 disabled:bg-gray-700"
           >
             {status === 'loading' ? 'Locking...' : 'Lock In Now'}
           </button>
@@ -65,7 +67,7 @@ export default function Home() {
         <p>📱 X + IG + FB</p>
       </div>
 
-      <p className="mt-6 text-xs text-gray-600">
+      <p className="mt-6 text-xs text-gray-600 text-center">
         © 2026 Media Hub. Built for creators who hate posting 3 times.
       </p>
     </main>
