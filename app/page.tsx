@@ -28,6 +28,8 @@ export default function Home() {
         <h2 style={{margin:'8px 0'}}>Lock in 50% off at launch.</h2>
         <p style={{margin:'0 0 12px'}}>Only 100 spots. Price doubles after.</p>
 
+        <div className="cta">Join the waitlist ↓</div> {/* <- NEW LINE */}
+
         <form onSubmit={onSubmit}>
           <input type="email" required placeholder="your@email.com" value={email} onChange={e=>setEmail(e.target.value)} />
           <button className="btn" disabled={status==='loading'}>
