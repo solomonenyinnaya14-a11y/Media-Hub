@@ -1,9 +1,52 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+:root {
+  color-scheme: dark; /* Lock to dark mode */
+}
 
-body { 
-  background: #000; 
+body {
+  background-color: #000; /* Pure black */
+  color: #fff; /* White text */
+  margin: 0;
+  padding: 24px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  max-width: 600px;
+}
+
+h1 {
+  font-size: 40px;
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+.purple {
+  color: #a855f7; /* That purple */
+}
+
+.card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 16px;
+}
+
+input {
+  background: #111;
   color: #fff;
-  min-height: 100dvh;
+  border: 1px solid #333;
+  padding: 14px 16px;
+  border-radius: 12px;
+  width: 100%;
+  font-size: 16px;
+}
+
+button {
+  background: #a855f7; /* Purple button */
+  color: #fff;
+  border: none;
+  padding: 14px 16px;
+  border-radius: 12px;
+  width: 100%;
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 12px;
 }
