@@ -11,12 +11,13 @@ body {
 }
 
 .brand { 
-  font-size: 14px; 
-  font-weight: 800; 
-  letter-spacing: 0.5px; 
+  font-size: 20px; /* Bigger */
+  font-weight: 900; /* Bolder */
+  letter-spacing: 1.5px; /* Premium spacing */
   color: #a855f7; 
-  margin-bottom: 24px; 
+  margin-bottom: 32px; /* Space before headline */
   text-transform: uppercase;
+  text-align: center; /* Centered */
 }
 
 h1 { 
@@ -24,12 +25,14 @@ h1 {
   line-height: 1.05; 
   font-weight: 800; 
   margin: 0; 
+  text-align: center; /* Center the headline too to match */
 }
 
 .sub { 
   color: #d1d5db; 
   margin-top: 12px; 
   font-size: 15px;
+  text-align: center; /* Center subtext too */
 }
 
 .purple { 
@@ -90,10 +93,12 @@ input {
   margin-top: 12px; 
   display: flex; 
   gap: 12px; 
+  justify-content: center; /* Center the badges */
 }
 
 .footer { 
   color: #6b7280; 
   font-size: 12px; 
   margin-top: 16px; 
+  text-align: center; /* Center footer */
 }
