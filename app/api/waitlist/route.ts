@@ -1,38 +1,64 @@
+import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { createClient } from '@supabase/supabase-js';
-import { NextResponse } from 'next/server';
 
+// 1. Init clients
 const resend = new Resend(process.env.RESEND_API_KEY);
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY! // Use service key on server, not anon key
 );
 
 export async function POST(req: Request) {
   try {
     const { email } = await req.json();
 
-    // 1. Save to Supabase
-    const { error: dbError } = await supabase.from('waitlist').insert({ email });
-    if (dbError) throw dbError;
+    if (!email || !email.includes('@')) {
+      return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
+    }
 
-    // 2. Send email - TO YOUR GMAIL ONLY
-    await resend.emails.send({
-      from: 'Media Hub <onboarding@resend.dev>',
-      to: 'solomonenyinaya14@gmail.com', // <-- This is your real Gmail
-      subject: '🔒 You’re locked in for 50% off Media Hub',
+    // 2. Save to Supabase first
+    const { error: dbError } = await supabase
+      .from('waitlist')
+      .insert([{ email }]);
+
+    if (dbError) {
+      console.error('Supabase insert error:', dbError);
+      // Don't block email if DB fails? Or do. Your call. I'll block.
+      return NextResponse.json({ error: 'Failed to save email' }, { status: 500 });
+    }
+
+    // 3. Send email via Resend
+    // TODO: Replace resend.dev with your verified domain before launch
+    const { data, error: emailError } = await resend.emails.send({
+      from: 'Media Hub <onboarding@resend.dev>', // CHANGE TO onboarding@mail.mediahub.ng later
+      to: email,
+      subject: 'You’re Locked In 🚀 | 50% Off Media Hub',
       html: `
-        <h2>CEO, you’re on the list.</h2>
-        <p>Only 100 spots at 50% off. Price doubles at launch.</p>
-        <p>We’ll email you when doors open.</p>
-        <br>
-        <p>- Media Hub Team</p>
-      `,
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+          <h1 style="color: #7c3aed;">Post Once. Reach Everywhere.</h1>
+          <p>Hey there,</p>
+          <p>✅ You're locked in for <strong>50% off at launch</strong>.</p>
+          <p>Only 100 spots. Price doubles after.</p>
+          <p>We'll email you the moment Media Hub opens.</p>
+          <br/>
+          <p>- Solomon, Founder @ Media Hub</p>
+        </div>
+      `
     });
 
-    return NextResponse.json({ ok: true });
-  } catch (error: any) {
-    console.error(error);
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    if (emailError) {
+      console.error('Resend error:', emailError);
+      // Email failed but DB saved. Still tell frontend it worked, but log it.
+      return NextResponse.json({ ok: true, email_sent: false, emailError }, { status: 200 });
+    }
+
+    console.log('Email sent:', data?.id);
+    return NextResponse.json({ ok: true, email_sent: true, id: data?.id });
+
+  } catch (err) {
+    console.error('Waitlist route crashed:', err);
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
   }
 }
