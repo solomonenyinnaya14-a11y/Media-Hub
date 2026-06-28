@@ -18,6 +18,8 @@ export default function Home() {
 
   return (
     <>
+      <div className="brand">Media Hub</div>
+      
       <h1>Post Once.<br/><span className="purple">Reach<br/>Everywhere.</span></h1>
       <p className="sub">Schedule to Facebook, X, Instagram from one dashboard. Stop copy-pasting.</p>
       
