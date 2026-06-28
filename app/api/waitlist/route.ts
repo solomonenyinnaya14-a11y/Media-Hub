@@ -1,72 +1,37 @@
-import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
-import { createClient } from '@supabase/supabase-js';
 
-// Server-only clients. Never expose SERVICE_ROLE_KEY to browser.
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!, // Must be Service Role, not Anon Key
-  {
-    auth: { persistSession: false } // Important for serverless functions
-  }
-);
-
 export async function POST(req: Request) {
-  try {
-    const body = await req.json();
-    const email = body?.email?.toLowerCase().trim();
-
-    if (!email || !email.includes('@')) {
-      return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
-    }
-
-    // 1. Save to Supabase first. If email exists already, ignore it and continue.
-    const { error: dbError } = await supabase
-      .from('waitlist')
-      .insert([{ email }]);
-
-    if (dbError) {
-      // 23505 = unique_violation / duplicate key. That's OK, don't fail.
-      if (dbError.code !== '23505') {
-        console.error('Supabase insert error:', dbError);
-        return NextResponse.json({ error: 'Database error' }, { status: 500 });
-      }
-      console.log('Duplicate email, continuing:', email);
-    }
-
-    // 2. Send email via Resend
-    // CRITICAL: With onboarding@resend.dev you can ONLY send TO your Resend account email.
-    // Change this to your Resend login email for testing. Verify a domain to send to anyone later.
-    const { data, error: emailError } = await resend.emails.send({
-      from: 'Media Hub <onboarding@resend.dev>',
-      to: 'solomonenyinnaya14@gmail.com', // <-- REPLACE THIS WITH YOUR RESEND LOGIN EMAIL NOW
-      subject: 'You’re Locked In 🚀 | 50% Off Media Hub',
-      html: `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #111;">
-          <h1 style="color: #7c3aed; margin: 0 0 16px 0;">Post Once. Reach Everywhere.</h1>
-          <p>Hey there,</p>
-          <p>✅ You're locked in for <strong>50% off at launch</strong>.</p>
-          <p>Only 100 spots. Price doubles after.</p>
-          <p>We'll email you the moment Media Hub opens.</p>
-          <br/>
-          <p>- Solomon, Founder @ Media Hub</p>
-        </div>
-      `,
-    });
-
-    if (emailError) {
-      console.error('Resend error:', emailError);
-      // Don't 500 the whole request if email fails. DB save already worked.
-      return NextResponse.json({ ok: true, email_sent: false, emailError: emailError.message }, { status: 200 });
-    }
-
-    console.log('Email sent successfully:', data?.id);
-    return NextResponse.json({ ok: true, email_sent: true, id: data?.id });
-
-  } catch (err: any) {
-    console.error('Waitlist route crashed:', err);
-    return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
+  const { email } = await req.json();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return Response.json({ ok: false }, { status: 400 });
   }
+
+  await resend.emails.send({
+    from: 'Solomon from Media Hub <onboarding@resend.dev>', // Human name + free Resend domain
+    to: email,
+    subject: 'You’re in: Media Hub early access', // No spam words
+    html: `
+      <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; color: #fff; background: #000; padding: 24px;">
+        <div style="font-size: 14px; font-weight: 900; letter-spacing: 1.5px; color: #a855f7; text-align: center; margin-bottom: 24px;">MEDIA HUB</div>
+        
+        <h1 style="font-size: 32px; line-height: 1.1; font-weight: 800; text-align: center; margin: 0; color: #fff;">
+          Post Once. <span style="color: #a855f7;">Reach Everywhere.</span>
+        </h1>
+        
+        <p style="margin: 16px 0;">Hey there,</p>
+        
+        <p>✅ <strong>You're on the early access list for Media Hub.</strong></p>
+        
+        <p>We're only letting in 100 creators first. You'll get first access when we open.</p>
+        
+        <p>We'll email you the moment Media Hub opens.</p>
+        
+        <p style="margin-top: 24px;">- Solomon, Founder @ Media Hub</p>
+      </div>
+    `,
+  });
+
+  return Response.json({ ok: true });
 }
