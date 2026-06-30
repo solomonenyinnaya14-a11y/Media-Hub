@@ -1,51 +1,34 @@
 'use client';
 import { useState } from 'react';
 
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwjD5qIBsFVCSUDEnHrB-MKS0UAbC8WKCMGK-Rt9mMPzVk2-xt39Xd17veacb-sSHbgdg/exec";
+
 export default function Home() {
-  const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle'|'loading'|'ok'|'error'>('idle');
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setStatus('loading');
-    const res = await fetch('/api/waitlist', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({email})
-    });
-    setStatus(res.ok ? 'ok' : 'error');
-  }
-
+  const [msg, setMsg] = useState('');
+  
   return (
     <>
-      <div className="brand">Media Hub</div>
-      
-      <h1>Post Once.<br/><span className="purple">Reach<br/>Everywhere.</span></h1>
-      <p className="sub">Schedule to Facebook, X, Instagram from one dashboard. Stop copy-pasting.</p>
-      
-      <div className="card">
-        <div className="small">FOUNDING CREATOR OFFER</div>
-        <h2 style={{margin:'8px 0'}}>Lock in 50% off at launch.</h2>
-        <p style={{margin:'0 0 12px'}}>Only 100 spots. Price doubles after.</p>
-
-        <div className="cta">Join the waitlist ↓</div> {/* <- NEW LINE */}
-
-        <form onSubmit={onSubmit}>
-          <input type="email" required placeholder="your@email.com" value={email} onChange={e=>setEmail(e.target.value)} />
-          <button className="btn" disabled={status==='loading'}>
-            {status==='loading' ? 'Adding...' : 'Lock In Now'}
-          </button>
-        </form>
-        {status==='ok' && <div className="success">✅ Locked in. 50% off reserved for you at launch</div>}
-        {status==='error' && <div style={{color:'#f87171', marginTop:8}}>Something went wrong.</div>}
-      </div>
-
-      <div className="meta">
-        <span>🔥 100 spots</span>
-        <span>⚡ Nigeria</span>
-        <span>📱 X + IG + FB</span>
-      </div>
-      <div className="footer">© 2026 Media Hub. Built for creators who hate posting 3 times.</div>
+    <form 
+      onSubmit={async (e) => {
+        e.preventDefault();
+        setMsg("Locking you in...");
+        const email = (e.target as any).email.value;
+        
+        await fetch(WEB_APP_URL, {
+          method: "POST",
+          mode: "no-cors", // <- This is why Google works
+          body: new URLSearchParams({ email })
+        });
+        
+        setMsg("✅ You're in. Check your email.");
+        (e.target as any).reset();
+      }} 
+      style={{display:'flex', gap:'8px', marginTop:'16px'}}
+    >
+      <input type="email" name="email" placeholder="your@email.com" required style={{flex:1, padding:'12px', borderRadius:'8px', border:'1px solid #ccc'}}/>
+      <button type="submit" style={{padding:'12px 20px', borderRadius:'8px', border:0, background:'#000', color:'#fff', fontWeight:600}}>Lock In Now</button>
+    </form>
+    <p>{msg}</p>
     </>
-  );
+  )
 }
