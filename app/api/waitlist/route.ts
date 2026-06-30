@@ -1,37 +1,37 @@
-import { Resend } from 'resend';
+<form id="waitlist" style="display:flex; gap:8px; margin-top:16px;">
+  <input 
+    type="email" 
+    name="email" 
+    placeholder="your@email.com" 
+    required
+    style="flex:1; padding:12px; border-radius:8px; border:1px solid #ccc;"
+  >
+  <button 
+    type="submit" 
+    style="padding:12px 20px; border-radius:8px; border:0; background:#000; color:#fff; font-weight:600;"
+  >
+    Lock In Now
+  </button>
+</form>
+<p id="msg" style="margin-top:8px; font-size:14px;"></p>
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+<script>
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwjD5qIBsFVCSUDEnHrB-MKS0UAbC8WKCMGK-Rt9mMPzVk2-xt39Xd17veacb-sSHbgdg/exec";
 
-export async function POST(req: Request) {
-  const { email } = await req.json();
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return Response.json({ ok: false }, { status: 400 });
-  }
-
-  await resend.emails.send({
-    from: 'Solomon from Media Hub <onboarding@resend.dev>', // Human name + free Resend domain
-    to: email,
-    subject: 'You’re in: Media Hub early access', // No spam words
-    html: `
-      <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; color: #fff; background: #000; padding: 24px;">
-        <div style="font-size: 14px; font-weight: 900; letter-spacing: 1.5px; color: #a855f7; text-align: center; margin-bottom: 24px;">MEDIA HUB</div>
-        
-        <h1 style="font-size: 32px; line-height: 1.1; font-weight: 800; text-align: center; margin: 0; color: #fff;">
-          Post Once. <span style="color: #a855f7;">Reach Everywhere.</span>
-        </h1>
-        
-        <p style="margin: 16px 0;">Hey there,</p>
-        
-        <p>✅ <strong>You're on the early access list for Media Hub.</strong></p>
-        
-        <p>We're only letting in 100 creators first. You'll get first access when we open.</p>
-        
-        <p>We'll email you the moment Media Hub opens.</p>
-        
-        <p style="margin-top: 24px;">- Solomon, Founder @ Media Hub</p>
-      </div>
-    `,
+document.getElementById('waitlist').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById('msg');
+  const email = e.target.email.value;
+  
+  msg.textContent = "Locking you in...";
+  
+  await fetch(WEB_APP_URL, {
+    method: "POST",
+    mode: "no-cors", 
+    body: new URLSearchParams({email})
   });
-
-  return Response.json({ ok: true });
-}
+  
+  msg.textContent = "✅ You're in. Check your email.";
+  e.target.reset();
+});
+</script>
