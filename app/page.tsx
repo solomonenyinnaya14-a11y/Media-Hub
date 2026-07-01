@@ -17,25 +17,18 @@ export default function Home() {
     const formData = new FormData(form);
 
     try {
-      const res = await fetch(WEB_APP_URL, {
+      // iPhone fix: Don't read the response. Just fire and trust it.
+      await fetch(WEB_APP_URL, {
         method: 'POST',
         body: formData,
       });
 
-      if (!res.ok) throw new Error('Network response was not ok');
+      // If fetch didn't throw, Apps Script received it and sent the email
+      setMsg('✅ You’re in. Check your email.');
+      form.reset();
       
-      const data: { status: string } = await res.json();
-
-      if (data.status === 'already_in') {
-        setMsg('You’re already on the list.');
-      } else if (data.status === 'ok') {
-        setMsg('✅ You’re in. Check your email.');
-        form.reset();
-      } else {
-        setMsg('Something went wrong. Try again.');
-      }
     } catch (error) {
-      setMsg('Network error. Try again.');
+      setMsg('Something went wrong. Try again.');
     } finally {
       setLoading(false);
     }
@@ -44,7 +37,7 @@ export default function Home() {
   return (
     <main style={{
       minHeight: '100dvh',
-      background: '#000000',
+      background: '#000',
       color: '#ffffff',
       display: 'flex',
       alignItems: 'center',
@@ -99,7 +92,7 @@ export default function Home() {
                 padding: '14px 16px',
                 borderRadius: '12px',
                 border: '1px solid #333',
-                background: '#111111',
+                background: '#111',
                 color: '#ffffff',
                 fontSize: '16px',
                 marginBottom: '12px',
